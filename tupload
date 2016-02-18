@@ -1,0 +1,66 @@
+#!/bin/zsh
+
+# =========================================================================
+# --------tupload - A tool that uploads text to any "fiche" server.--------
+# This is for ZSH but it works with BASH as well.
+# You have to change "zsh" to "bash" in the first line, and the last line.
+# =========================================================================
+
+# Argument = -f file -s string -server server -nc noclipboard
+
+# START: Help Output
+usage()
+{
+    cat << EOF
+    $1Usage: tupload [FILE] [OPTIONS]
+
+    OPTIONS:
+    -h, --help       Show this message.
+    -s, --string     Input is pure text.
+    -f, --file       Input is file (default).
+    -sv, --server    Change server to [ADDRESS] [PORT].
+    -nc, --noclip    Print the link. If clipboard cannot be used, this is default.
+EOF
+}
+# END: Help Output
+
+# START: Detect OS
+OSTYPE=$(uname -s)
+case "$OSTYPE" in
+    "CYGWIN"*)  DELIMITER='>'; CLIPBOARD='/dev/clipboard' ;;
+    *"Linux"*)  DELIMITER='|'; CLIPBOARD='xclip -selection clipboard'; if ! xclip &> /dev/null; then echo "You don't have X. Echoing the URL instead."; DELIMITER=''; CLIPBOARD='';fi ;;
+    "Darwin"*)  DELIMITER='|'; CLIPBOARD='pbcopy' ;;
+    *)          echo "Can't find your OS type.\nPlease edit the script for your clipboard settings."; exit 1;;
+esac
+# END: Detect OS
+
+# START: Defaults
+# change to "echo" if you want default to be a string, instead of file.
+UTIL='cat'
+# Add your server address to this.
+SERVER='server.address.com'
+# And your port to this.
+PORT='9999'
+# END: Defaults
+
+while [[ $# -gt 0 ]]; do
+    opt="$1"
+    shift;
+    current_arg="$1"
+    case "$opt" in
+        "-h"|"--help"       ) usage; exit;;
+        "-f"|"--file"       ) UTIL="cat";;
+        "-s"|"--string"     ) UTIL="echo";;
+        "-nc"|"--noclip"    ) DELIMITER=""; CLIPBOARD="";;
+        "-sv"|"--server"    ) SERVER="$1"; PORT="$2" shift;;
+        -*                  ) echo "ERROR: Invalid option: \""$opt"\"" >&2; usage; exit;;
+        *                   ) INPUT="$opt";;
+    esac
+done
+
+if [[ -z $INPUT ]]; then
+    usage "There's no input."$'\n'"    "; # Please don't edit this line :(
+    exit 1;
+fi
+
+/bin/zsh -c "$UTIL $INPUT | nc $SERVER $PORT $DELIMITER $CLIPBOARD"
