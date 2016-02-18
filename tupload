@@ -6,19 +6,17 @@
 # You have to change "zsh" to "bash" in the first line, and the last line.
 # =========================================================================
 
-# Argument = -f file -s string -server server -nc noclipboard
-
 # START: Help Output
 usage()
 {
     cat << EOF
-    $1Usage: tupload [FILE] [OPTIONS]
+    $1Usage: tupload <FILE> [OPTIONS] [-sv,--server "<ADDRESS> <PORT>"]
 
     OPTIONS:
     -h, --help       Show this message.
     -s, --string     Input is pure text.
     -f, --file       Input is file (default).
-    -sv, --server    Change server to [ADDRESS] [PORT].
+    -sv, --server    Change server to "<ADDRESS> <PORT>". Must be at the end.
     -nc, --noclip    Print the link. If clipboard cannot be used, this is default.
 EOF
 }
@@ -29,18 +27,26 @@ OSTYPE=$(uname -s)
 case "$OSTYPE" in
     "CYGWIN"*)  DELIMITER='>'; CLIPBOARD='/dev/clipboard' ;;
     *"Linux"*)  DELIMITER='|'; CLIPBOARD='xclip -selection clipboard'; if ! xclip &> /dev/null; then echo "You don't have X. Echoing the URL instead."; DELIMITER=''; CLIPBOARD='';fi ;;
-    "Darwin"*)  DELIMITER='|'; CLIPBOARD='pbcopy' ;;
+    "Darwin"*)  DELIMITER='|'; CLIPBOARD='pbcopy' ;; # OSX
     *)          echo "Can't find your OS type.\nPlease edit the script for your clipboard settings."; exit 1;;
 esac
 # END: Detect OS
 
 # START: Defaults
+
+# Change to true if you want -nc to be default.
+NOCLIP='false'
+if [[ "$NOCLIP" = 'true' ]]; then DELIMITER=""; CLIPBOARD=""; fi
+
 # change to "echo" if you want default to be a string, instead of file.
 UTIL='cat'
+
 # Add your server address to this.
 SERVER='server.address.com'
+
 # And your port to this.
 PORT='9999'
+
 # END: Defaults
 
 while [[ $# -gt 0 ]]; do
@@ -52,7 +58,7 @@ while [[ $# -gt 0 ]]; do
         "-f"|"--file"       ) UTIL="cat";;
         "-s"|"--string"     ) UTIL="echo";;
         "-nc"|"--noclip"    ) DELIMITER=""; CLIPBOARD="";;
-        "-sv"|"--server"    ) SERVER="$1"; PORT="$2" shift;;
+        "-sv"|"--server"    ) SERVER="$1"; PORT="$2"; shift;;
         -*                  ) echo "ERROR: Invalid option: \""$opt"\"" >&2; usage; exit;;
         *                   ) INPUT="$opt";;
     esac
