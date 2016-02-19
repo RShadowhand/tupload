@@ -33,6 +33,7 @@ The option `--server` **MUST** have address and port. Otherwise it will fail.
  * If your OS isn't in the list, add your OS and the clipboard method.
  * If you want the default to be `--string`, change the `UTIL` from `cat` to `echo`
  * If you want the default to be `--noclip`, change the `NOCLIP` to `true`
+ * If you want the default to be `--saveclip`, change the `SAVECLIP` to `true`
 * Ready to go!
 
 ### License
