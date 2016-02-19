@@ -1,10 +1,12 @@
-# =========================================================================
-# --------tupload - A tool that uploads text to any "fiche" server.--------
-# =========================================================================
+# =================================================================
+# ----tupload - A tool that uploads text to any "fiche" server.----
+# ------------------Copyright (C) 2016 Shadowhand------------------
+# =================================================================
 
 # START: Defaults
 NOCLIP='false'                 # Change to 'true' if you want -n to be default.
 UTIL='cat'                     # Change to "echo" if you want -s (string) to be default, instead of -f (file).
+SAVECLIP='false'               # Change to 'false' if you want --saveclip to be default.
 SERVER='server.address.com'    # Add your server address to this.
 PORT='9999'                    # And your port to this.
 # END: Defaults
@@ -13,47 +15,74 @@ PORT='9999'                    # And your port to this.
 usage()
 {
     cat << EOF
-    $1Usage: tupload <FILE> [OPTIONS] [-sv,--server "<ADDRESS> <PORT>"]
+    Usage: tupload <INPUT> [OPTIONS] [-sv,--server "<ADDRESS> <PORT>"]
 
     OPTIONS:
     -h, --help       Show this message.
-    -s, --string     Input is pure text.
+    -s, --string     Input is quoted string, not a file.
     -f, --file       Input is file (default).
-    --server         Change server to "<ADDRESS> <PORT>". Must be at the end.
     -n, --noclip     Print the link. If clipboard cannot be used, this is default.
+    --saveclip       Copy your current clipboard into ~/tempcb
+    --server         Change server to "<ADDRESS> <PORT>".
 EOF
 }
 # END: Help Output
 
-# START: Detect OS
-OSTYPE=$(uname -s)
-case "$OSTYPE" in
-    "CYGWIN"*)  DELIMITER='>'; CLIPBOARD='/dev/clipboard' ;;
-    *"Linux"*)  DELIMITER='|'; CLIPBOARD='xclip -selection clipboard'; if ! xclip -o -selection clipboard &> /dev/null; then echo "    You don't have X or xclip. Echoing the URL instead."; DELIMITER=''; CLIPBOARD='';fi ;;
-    "Darwin"*)  DELIMITER='|'; CLIPBOARD='pbcopy' ;; # OSX
-    *)          echo "Can't find your OS type.\nPlease edit the script for your clipboard settings."; exit 1;;
-esac
-if [ "$NOCLIP" = 'true' ]; then DELIMITER=""; CLIPBOARD=""; fi
-# END: Detect OS
-
+# START: Args
 while [ $# -gt 0 ]; do
     opt="$1"
     shift;
     current_arg="$1"
     case "$opt" in
-        "-h"|"--help"       ) usage "tupload - A tool that uploads text to any \"fiche\" server."$'\n'"    Copyright (C) 2016  Shadowhand"$'\n'$'\n'"    "; exit;;
+        "-h"|"--help"       ) echo "    tupload - A tool that uploads text to any \"fiche\" server."; echo "    Copyright (C) 2016  Shadowhand"; usage; exit;;
         "-f"|"--file"       ) UTIL="cat";;
         "-s"|"--string"     ) UTIL="echo";;
-        "-n"|"--noclip"     ) DELIMITER=""; CLIPBOARD="";;
+        "-n"|"--noclip"     ) NOCLIP='true';;
         "--server"          ) SERVER="$1"; PORT="$2"; shift;;
+        "--saveclip"        ) SAVECLIP='true';;
         -*                  ) echo "    ERROR: Invalid option: \""$opt"\"" >&2; usage; exit;;
         *                   ) INPUT="$opt";;
     esac
 done
+# END: Args
 
+# START: Input Check
 if [ -z $INPUT ]; then
-    usage "There's no input."$'\n'"    "; # Please don't edit this line :(
+    echo "    There's no input."
+    usage
     exit 1;
 fi
+# END: Input Check
 
+# START: Detect OS
+OSTYPE=$(uname -s)
+case "$OSTYPE" in
+    "CYGWIN"*)  DELIMITER='>'; CLIPBOARD='/dev/clipboard' ;;
+    "Darwin"*)  DELIMITER='|'; CLIPBOARD='pbcopy' ;; # OSX
+    *"Linux"*)  DELIMITER='|'; CLIPBOARD='xclip -selection clipboard';
+                if [ -z "$DISPLAY" ]; then
+                    echo "    There's no X session running, xclip won't work. Echoing the URL instead.";
+                    NOCLIP='true';
+                fi ;;
+            *)  echo "Can't find your OS type.\nPlease edit the script for your clipboard settings."; exit 1;;
+esac
+# END: Detect OS
+
+# START: Clipboard stuff
+if [ "$NOCLIP" = 'true' ]; then
+    SAVECLIP='false';
+    DELIMITER="";
+    CLIPBOARD=""; 
+fi
+if [ "$SAVECLIP" = 'true' ]; then
+    case "$OSTYPE" in
+        "CYGWIN"*)  cat /dev/clipboard > ~/tempcb ;;
+        "Darwin"*)  pbpaste > ~/tempcb ;;
+        *"Linux"*)  xclip -selection clipboard > ~/tempcb ;;
+    esac
+    echo "Your current clipboard is placed into ~/tempcb.";
+fi
+# END: Clipboard stuff
+
+# Finally run the command.
 eval "$UTIL $INPUT | nc $SERVER $PORT $DELIMITER $CLIPBOARD"

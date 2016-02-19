@@ -1,16 +1,17 @@
 # Tupload - A tool to upload text to any "fiche" server.
 
-Usage: `tupload <FILE> [OPTIONS] [--server "<ADDRESS> <PORT>"]`  
+Usage: `tupload <INPUT> [OPTIONS] [--server "<ADDRESS> <PORT>"]`  
 
 OPTIONS:
 
 | Short | Long | Function |
 |-------|----------|---------------------------------------------------------------|
 | -h | --help | Show help message with the copyright. |
-| -s | --string | Input is not file. |
+| -s | --string | Input is quoted string, not a file. |
 | -f | --file | Input is file. (Default) |
-| N/A | --server | Change server to "\<ADDRESS\> \<PORT\>". Must be at the end. |
 | -n | --noclip | Print the link. If clipboard cannot be used, this is default. |
+| N/A | --server | Change server to "\<ADDRESS\> \<PORT\>". |
+| N/A | --saveclip | Copy your current clipboard into ~/tempcb |
 
 ---
 ### Important Notes
@@ -18,7 +19,7 @@ Tupload will detect your OS and copy the link to your clipboard if possible.
 It supports Cygwin, Linux and OSX, and Bourne shells.  
 Tupload **WILL** override your clipboard. Use `-n` if you want to prevent this.  
 On Linux, Tupload will attempt to use xclip. If X or xclip isn't installed, it will assume `--noclip` by default.  
-The option `--server` **MUST** be at the end of the command, and it **MUST** have address and port. Otherwise it will fail.
+The option `--server` **MUST** have address and port. Otherwise it will fail.
 
 ---
 
