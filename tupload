@@ -19,8 +19,8 @@ usage()
 
     OPTIONS:
     -h, --help       Show this message.
-    -s, --string     Input is quoted string, not a file.
-    -f, --file       Input is file (default).
+    -s, --string     Input is a quoted string, not a file.
+    -f, --file       Input is path to a file (default).
     -n, --noclip     Print the link. If clipboard cannot be used, this is default.
     --saveclip       Copy your current clipboard into ~/tempcb
     --server         Change server to "<ADDRESS> <PORT>".

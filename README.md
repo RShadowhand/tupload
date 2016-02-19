@@ -7,8 +7,8 @@ OPTIONS:
 | Short | Long | Function |
 |-------|----------|---------------------------------------------------------------|
 | -h | --help | Show help message with the copyright. |
-| -s | --string | Input is quoted string, not a file. |
-| -f | --file | Input is file. (Default) |
+| -s | --string | Input is a quoted string, not a file. |
+| -f | --file | Input is path to a file. (Default) |
 | -n | --noclip | Print the link. If clipboard cannot be used, this is default. |
 | N/A | --server | Change server to "\<ADDRESS\> \<PORT\>". |
 | N/A | --saveclip | Copy your current clipboard into ~/tempcb |
