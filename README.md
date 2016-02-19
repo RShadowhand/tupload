@@ -16,8 +16,8 @@ OPTIONS:
 ### Important Notes
 Tupload will detect your OS and copy the link to your clipboard if possible.  
 It supports Cygwin, Linux and OSX, and Bourne shells.  
-Tupload **WILL** override your clipboard. Use `-nc` if you want to prevent this.  
-On Linux, Tupload will attempt to use xclip. If X or xclip isn't installed, it will assume `-nc` by default.  
+Tupload **WILL** override your clipboard. Use `-n` if you want to prevent this.  
+On Linux, Tupload will attempt to use xclip. If X or xclip isn't installed, it will assume `--noclip` by default.  
 The option `--server` **MUST** be at the end of the command, and it **MUST** have address and port. Otherwise it will fail.
 
 ---
@@ -29,7 +29,6 @@ The option `--server` **MUST** be at the end of the command, and it **MUST** hav
 * `chmod +x /usr/bin/tupload`
 * `vim /usr/bin/tupload` (or mcedit, or nano, or emacs, or anything you want, really)
  * Edit the default server and port.
- * If your shell isn't BASH, change `SHELL` to your shell.
  * If your OS isn't in the list, add your OS and the clipboard method.
  * If you want the default to be `--string`, change the `UTIL` from `cat` to `echo`
  * If you want the default to be `--noclip`, change the `NOCLIP` to `true`

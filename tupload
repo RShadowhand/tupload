@@ -3,11 +3,10 @@
 # =========================================================================
 
 # START: Defaults
-SHELL=  'bash'                  # Change this if you don't use BASH.
-NOCLIP= 'false'                 # Change to 'true' if you want -n to be default.
-UTIL=   'cat'                   # Change to "echo" if you want -s (string) to be default, instead of -f (file).
-SERVER= 'server.address.com'    # Add your server address to this.
-PORT=   '9999'                  # And your port to this.
+NOCLIP='false'                 # Change to 'true' if you want -n to be default.
+UTIL='cat'                     # Change to "echo" if you want -s (string) to be default, instead of -f (file).
+SERVER='server.address.com'    # Add your server address to this.
+PORT='9999'                    # And your port to this.
 # END: Defaults
 
 # START: Help Output
@@ -47,7 +46,7 @@ while [[ $# -gt 0 ]]; do
         "-s"|"--string"     ) UTIL="echo";;
         "-n"|"--noclip"     ) DELIMITER=""; CLIPBOARD="";;
         "--server"          ) SERVER="$1"; PORT="$2"; shift;;
-        -*                  ) echo "ERROR: Invalid option: \""$opt"\"" >&2; usage; exit;;
+        -*                  ) echo "    ERROR: Invalid option: \""$opt"\"" >&2; usage; exit;;
         *                   ) INPUT="$opt";;
     esac
 done
@@ -57,4 +56,4 @@ if [[ -z $INPUT ]]; then
     exit 1;
 fi
 
-$(which "$SHELL") -c "$UTIL $INPUT | nc $SERVER $PORT $DELIMITER $CLIPBOARD"
+eval "$UTIL $INPUT | nc $SERVER $PORT $DELIMITER $CLIPBOARD"
