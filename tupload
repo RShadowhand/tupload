@@ -29,14 +29,14 @@ EOF
 OSTYPE=$(uname -s)
 case "$OSTYPE" in
     "CYGWIN"*)  DELIMITER='>'; CLIPBOARD='/dev/clipboard' ;;
-    *"Linux"*)  DELIMITER='|'; CLIPBOARD='xclip -selection clipboard'; if ! xclip &> /dev/null; then echo "You don't have X or xclip. Echoing the URL instead."; DELIMITER=''; CLIPBOARD='';fi ;;
+    *"Linux"*)  DELIMITER='|'; CLIPBOARD='xclip -selection clipboard'; if ! xclip -o -selection clipboard &> /dev/null; then echo "    You don't have X or xclip. Echoing the URL instead."; DELIMITER=''; CLIPBOARD='';fi ;;
     "Darwin"*)  DELIMITER='|'; CLIPBOARD='pbcopy' ;; # OSX
     *)          echo "Can't find your OS type.\nPlease edit the script for your clipboard settings."; exit 1;;
 esac
-if [[ "$NOCLIP" = 'true' ]]; then DELIMITER=""; CLIPBOARD=""; fi
+if [ "$NOCLIP" = 'true' ]; then DELIMITER=""; CLIPBOARD=""; fi
 # END: Detect OS
 
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
     opt="$1"
     shift;
     current_arg="$1"
@@ -51,7 +51,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ -z $INPUT ]]; then
+if [ -z $INPUT ]; then
     usage "There's no input."$'\n'"    "; # Please don't edit this line :(
     exit 1;
 fi
