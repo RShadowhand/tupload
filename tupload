@@ -7,8 +7,8 @@
 NOCLIP='false'                 # Change to 'true' if you want -n to be default.
 UTIL='cat'                     # Change to "echo" if you want -s (string) to be default, instead of -f (file).
 SAVECLIP='false'               # Change to 'false' if you want --saveclip to be default.
-SERVER='server.address.com'    # Add your server address to this.
-PORT='9999'                    # And your port to this.
+SERVER='kad-server.net'    # Add your server address to this.
+PORT='5004'                    # And your port to this.
 # END: Defaults
 
 # START: Help Output
@@ -27,6 +27,19 @@ usage()
 EOF
 }
 # END: Help Output
+
+if [ $# -eq 0 ]; then
+    while read line
+    do
+      # break if the line is empty
+      [ -z "$line" ] && break
+      TMP="$TMP""$line"$'\n'
+    done
+    echo "$TMP" > /tmp/tupload_tmp
+    UTIL="cat"
+    INPUT="/tmp/tupload_tmp"
+fi
+
 
 # START: Args
 while [ $# -gt 0 ]; do
@@ -47,7 +60,7 @@ done
 # END: Args
 
 # START: Input Check
-if [ -z $INPUT ]; then
+if [ -z "$INPUT" ]; then
     echo "    There's no input."
     usage
     exit 1;
