@@ -29,6 +29,7 @@ EOF
 # END: Help Output
 
 if [ $# -eq 0 ]; then
+    TMP=""
     while read line
     do
       # break if the line is empty
@@ -85,7 +86,7 @@ esac
 if [ "$NOCLIP" = 'true' ]; then
     SAVECLIP='false';
     DELIMITER="";
-    CLIPBOARD=""; 
+    CLIPBOARD="";
 fi
 if [ "$SAVECLIP" = 'true' ]; then
     case "$OSTYPE" in
@@ -98,4 +99,4 @@ fi
 # END: Clipboard stuff
 
 # Finally run the command.
-eval "$UTIL $INPUT | nc $SERVER $PORT $DELIMITER $CLIPBOARD"
+eval "$UTIL "$INPUT" | nc $SERVER $PORT $DELIMITER $CLIPBOARD"
