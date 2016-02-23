@@ -7,8 +7,8 @@
 NOCLIP='false'                 # Change to 'true' if you want -n to be default.
 UTIL='cat'                     # Change to "echo" if you want -s (string) to be default, instead of -f (file).
 SAVECLIP='false'               # Change to 'false' if you want --saveclip to be default.
-SERVER='kad-server.net'    # Add your server address to this.
-PORT='5004'                    # And your port to this.
+SERVER='server.address.com'    # Add your server address to this.
+PORT='9999'                    # And your port to this.
 # END: Defaults
 
 # START: Help Output
@@ -28,19 +28,22 @@ EOF
 }
 # END: Help Output
 
+# START: Piping support
 if [ $# -eq 0 ]; then
     TMP=""
-    while read line
+    while true
     do
-      # break if the line is empty
+      read -t 1 line
       [ -z "$line" ] && break
       TMP="$TMP""$line"$'\n'
     done
-    echo "$TMP" > /tmp/tupload_tmp
-    UTIL="cat"
-    INPUT="/tmp/tupload_tmp"
+    if [ "$(echo "$TMP" | wc -c)" -gt 1 ]; then
+        echo "$TMP" > /tmp/tupload_tmp;
+        UTIL="cat";
+        INPUT="/tmp/tupload_tmp";
+    fi
 fi
-
+# END: Piping support
 
 # START: Args
 while [ $# -gt 0 ]; do
